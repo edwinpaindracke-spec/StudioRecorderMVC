@@ -11,8 +11,42 @@
     <button id="stopBtn" disabled>Stop Recording</button>
 
     <audio id="audioPlayback" controls></audio>
+    <input type="file" id="beatInput" accept="audio/*">
+    <button id="playBeatBtn" disabled>Play Beat</button>
+
 
     <script>
+
+        let beatAudio = null;
+
+        const beatInput = document.getElementById("beatInput");
+        const playBeatBtn = document.getElementById("playBeatBtn");
+
+        beatInput.onchange = () => {
+            const file = beatInput.files[0];
+            if (!file) return;
+
+            if (beatAudio) {
+                beatAudio.pause();
+                beatAudio = null;
+            }
+
+            beatAudio = new Audio(URL.createObjectURL(file));
+            beatAudio.loop = true; // Loop beat for recording
+            playBeatBtn.disabled = false;
+        };
+
+        playBeatBtn.onclick = () => {
+            if (beatAudio.paused) {
+                beatAudio.play();
+                playBeatBtn.textContent = "Pause Beat";
+            } else {
+                beatAudio.pause();
+                playBeatBtn.textContent = "Play Beat";
+            }
+        };
+
+
         let mediaRecorder;
         let chunks = [];
 
@@ -22,6 +56,8 @@
 
         startBtn.onclick = async () => {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            if (beatAudio && beatAudio.paused) beatAudio.play();
 
             mediaRecorder = new MediaRecorder(stream);
             mediaRecorder.ondataavailable = e => chunks.push(e.data);
