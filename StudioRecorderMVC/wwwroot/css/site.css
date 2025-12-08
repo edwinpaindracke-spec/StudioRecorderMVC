@@ -29,3 +29,69 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* --- Hero Section --- */
+.hero-section {
+    height: 70vh;
+    background: radial-gradient(circle at top, #2a2a39, #1b1b26);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    padding: 40px;
+}
+
+.studio-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.studio-subtitle {
+    font-size: 1.25rem;
+    opacity: 0.85;
+    margin-bottom: 30px;
+}
+
+/* --- Main Action Button --- */
+.studio-btn {
+    display: inline-block;
+    padding: 16px 32px;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, #6a5acd, #8a2be2);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s ease;
+    box-shadow: 0 8px 20px rgba(106, 90, 205, 0.5);
+}
+
+    .studio-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 26px rgba(138, 43, 226, 0.55);
+    }
+
+/* --- Features Section --- */
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 60px 20px;
+    background: #f7f7fb;
+}
+
+.feature {
+    width: 260px;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+    .feature i {
+        font-size: 2.3rem;
+        color: #6a5acd;
+        margin-bottom: 15px;
+    }

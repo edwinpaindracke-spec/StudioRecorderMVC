@@ -3,61 +3,54 @@
 <head>
     <meta charset="utf-8">
     <title>Studio Recorder</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+
+        .top-buttons {
+            margin-bottom: 20px;
+        }
+
+        .meter {
+            width: 300px;
+            height: 10px;
+            background: #ddd;
+        }
+    </style>
 </head>
 <body>
+
     <h1>Studio Recorder</h1>
 
-    <button id="startBtn">Start Recording</button>
-    <button id="stopBtn" disabled>Stop Recording</button>
+    <div class="top-buttons">
+        <button id="newRecordBtn">+ New Recording</button>
+        <input type="file" id="fileUpload" accept="audio/*">
+    </div>
 
-    <audio id="audioPlayback" controls></audio>
-    <input type="file" id="beatInput" accept="audio/*">
-    <button id="playBeatBtn" disabled>Play Beat</button>
+    <div style="margin-top: 30px;">
+        <button id="rewindBtn">⏮</button>
+        <button id="playBtn">▶</button>
+        <button id="forwardBtn">⏭</button>
 
+        <audio id="audioPlayback" controls style="display:block; margin-top:20px;"></audio>
+
+        <div class="meter" id="meter"></div>
+    </div>
 
     <script>
-
-        let beatAudio = null;
-
-        const beatInput = document.getElementById("beatInput");
-        const playBeatBtn = document.getElementById("playBeatBtn");
-
-        beatInput.onchange = () => {
-            const file = beatInput.files[0];
-            if (!file) return;
-
-            if (beatAudio) {
-                beatAudio.pause();
-                beatAudio = null;
-            }
-
-            beatAudio = new Audio(URL.createObjectURL(file));
-            beatAudio.loop = true; // Loop beat for recording
-            playBeatBtn.disabled = false;
-        };
-
-        playBeatBtn.onclick = () => {
-            if (beatAudio.paused) {
-                beatAudio.play();
-                playBeatBtn.textContent = "Pause Beat";
-            } else {
-                beatAudio.pause();
-                playBeatBtn.textContent = "Play Beat";
-            }
-        };
-
-
         let mediaRecorder;
         let chunks = [];
 
-        const startBtn = document.getElementById("startBtn");
-        const stopBtn = document.getElementById("stopBtn");
+        const playBtn = document.getElementById("playBtn");
+        const newRecordBtn = document.getElementById("newRecordBtn");
         const audioPlayback = document.getElementById("audioPlayback");
 
-        startBtn.onclick = async () => {
+        // Start new recording
+        newRecordBtn.onclick = async () => {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-            if (beatAudio && beatAudio.paused) beatAudio.play();
 
             mediaRecorder = new MediaRecorder(stream);
             mediaRecorder.ondataavailable = e => chunks.push(e.data);
@@ -65,10 +58,8 @@
             mediaRecorder.onstop = () => {
                 const blob = new Blob(chunks, { type: "audio/wav" });
                 chunks = [];
-
                 audioPlayback.src = URL.createObjectURL(blob);
 
-                // Upload to the backend
                 const formData = new FormData();
                 formData.append("audioFile", blob, "recording.wav");
 
@@ -79,15 +70,18 @@
             };
 
             mediaRecorder.start();
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
+            newRecordBtn.innerText = "Stop Recording";
+            newRecordBtn.onclick = () => {
+                mediaRecorder.stop();
+                newRecordBtn.innerText = "+ New Recording";
+                newRecordBtn.onclick = startNewRecording;
+            };
         };
 
-        stopBtn.onclick = () => {
-            mediaRecorder.stop();
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-        };
+        function startNewRecording() {
+            newRecordBtn.onclick();
+        }
     </script>
+
 </body>
 </html>
