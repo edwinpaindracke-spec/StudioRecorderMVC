@@ -1,6 +1,50 @@
 ﻿@{
-    ViewData["Title"] = "Cloud Ready";
+    ViewData["Title"] = "Cloud Storage";
 }
 
-<h1>Cloud Storage</h1>
-<p>This page will show cloud upload/download features.</p>
+<div class="feature-page">
+    <h1 class="page-title">☁️ Cloud Ready</h1>
+    <p class="page-description">
+        Upload and access your audio recordings from anywhere. Cloud syncing coming next!
+    </p>
+
+    <!-- Upload Box -->
+    <div class="upload-box">
+        <input type="file" id="cloudAudioInput" accept="audio/*" hidden />
+        <button id="cloudUploadBtn" class="upload-btn">📤 Upload to Cloud</button>
+    </div>
+
+    <!-- File List -->
+    <div class="cloud-list">
+        <h3 class="cloud-title">📁 Your Stored Audio</h3>
+        <ul id="fileList">
+            <li>No files yet. Upload one!</li>
+        </ul>
+    </div>
+
+    <!-- Placeholder for future cloud sync -->
+    <div class="cloud-placeholder">
+        <p>☁️ Cloud Sync Features Coming Soon...</p>
+    </div>
+</div>
+
+<script>
+    const cloudUploadBtn = document.getElementById("cloudUploadBtn");
+    const cloudAudioInput = document.getElementById("cloudAudioInput");
+    const fileList = document.getElementById("fileList");
+
+    cloudUploadBtn.onclick = () => cloudAudioInput.click();
+
+    cloudAudioInput.onchange = () => {
+        const file = cloudAudioInput.files[0];
+        if (!file) return;
+
+        // Add the file name visually to the list for now
+        const li = document.createElement("li");
+        li.textContent = file.name + " (saved locally)";
+        fileList.appendChild(li);
+
+        // TODO: Real cloud upload next step
+        alert("Cloud upload will be enabled soon.");
+    };
+</script>

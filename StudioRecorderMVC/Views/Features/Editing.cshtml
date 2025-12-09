@@ -2,5 +2,45 @@
     ViewData["Title"] = "Editing Tools";
 }
 
-<h1>Built-In Editing Tools</h1>
-<p>This page will contain your audio editor UI.</p>
+<div class="feature-page">
+    <h1 class="page-title">🎛️ Built-In Editing Tools</h1>
+    <p class="page-description">
+        Upload, preview, and prepare your audio for editing. Waveform editing tools will be added next.
+    </p>
+
+    <!-- Upload Section -->
+    <div class="upload-box">
+        <input type="file" id="audioInput" accept="audio/*" hidden />
+        <button id="uploadBtn" class="upload-btn">📁 Upload Audio</button>
+    </div>
+
+    <!-- Audio Player -->
+    <div class="player-box" id="playerBox" style="display:none;">
+        <h3 class="player-label">🎧 Audio Preview</h3>
+        <audio id="audioPlayer" controls></audio>
+    </div>
+
+    <!-- Placeholder for future audio editor -->
+    <div class="editor-placeholder">
+        <p>🛠️ Waveform Editor Coming Next...</p>
+    </div>
+</div>
+
+<script>
+    const uploadBtn = document.getElementById("uploadBtn");
+    const audioInput = document.getElementById("audioInput");
+    const audioPlayer = document.getElementById("audioPlayer");
+    const playerBox = document.getElementById("playerBox");
+
+    uploadBtn.onclick = () => audioInput.click();
+
+    audioInput.onchange = () => {
+        const file = audioInput.files[0];
+        if (!file) return;
+
+        const audioURL = URL.createObjectURL(file);
+        audioPlayer.src = audioURL;
+
+        playerBox.style.display = "block";
+    };
+</script>
