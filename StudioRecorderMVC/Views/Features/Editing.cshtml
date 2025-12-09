@@ -5,7 +5,7 @@
 <div class="feature-page">
     <h1 class="page-title">🎛️ Built-In Editing Tools</h1>
     <p class="page-description">
-        Upload, preview, and prepare your audio for editing. Waveform editing tools will be added next.
+        Upload your audio and edit it visually using our waveform editor.
     </p>
 
     <!-- Upload Section -->
@@ -14,23 +14,29 @@
         <button id="uploadBtn" class="upload-btn">📁 Upload Audio</button>
     </div>
 
-    <!-- Audio Player -->
-    <div class="player-box" id="playerBox" style="display:none;">
-        <h3 class="player-label">🎧 Audio Preview</h3>
-        <audio id="audioPlayer" controls></audio>
-    </div>
+    <!-- Waveform Container -->
+    <div id="waveform" class="waveform-container"></div>
 
-    <!-- Placeholder for future audio editor -->
-    <div class="editor-placeholder">
-        <p>🛠️ Waveform Editor Coming Next...</p>
+    <!-- Controls -->
+    <div class="waveform-controls" id="controls" style="display:none;">
+        <button id="playPauseBtn" class="control-btn">▶ Play</button>
+
+        <label class="zoom-label">Zoom:</label>
+        <input type="range" id="zoomSlider" min="0" max="200" value="0" />
     </div>
 </div>
 
+<!-- Script -->
+<script src="https://unpkg.com/wavesurfer.js"></script>
+
 <script>
+    let wavesurfer;
+
     const uploadBtn = document.getElementById("uploadBtn");
     const audioInput = document.getElementById("audioInput");
-    const audioPlayer = document.getElementById("audioPlayer");
-    const playerBox = document.getElementById("playerBox");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const zoomSlider = document.getElementById("zoomSlider");
+    const controls = document.getElementById("controls");
 
     uploadBtn.onclick = () => audioInput.click();
 
@@ -38,9 +44,31 @@
         const file = audioInput.files[0];
         if (!file) return;
 
-        const audioURL = URL.createObjectURL(file);
-        audioPlayer.src = audioURL;
+        if (wavesurfer) {
+            wavesurfer.destroy();
+        }
 
-        playerBox.style.display = "block";
+        const audioURL = URL.createObjectURL(file);
+
+        // Init WaveSurfer
+        wavesurfer = WaveSurfer.create({
+            container: "#waveform",
+            waveColor: "#a0a0ff",
+            progressColor: "#6c63ff",
+            cursorColor: "#333",
+            height: 140,
+        });
+
+        wavesurfer.load(audioURL);
+        controls.style.display = "flex";
+    };
+
+    playPauseBtn.onclick = () => {
+        wavesurfer.playPause();
+        playPauseBtn.textContent = wavesurfer.isPlaying() ? "⏸ Pause" : "▶ Play";
+    };
+
+    zoomSlider.oninput = () => {
+        wavesurfer.zoom(Number(zoomSlider.value));
     };
 </script>
