@@ -154,12 +154,19 @@
     <div class="top-buttons">
         <button id="newRecordBtn" class="btn">
             <i class="fa-solid fa-circle-dot"></i> New Recording
+
         </button>
 
         <label class="file-label">
             <i class="fa-solid fa-file-arrow-up"></i> Upload Audio
-            <input type="file" id="fileUpload" accept="audio/*">
+            <input type="file" id="uploadInput" accept="audio/*" style="display:none;" />
+            <button id="uploadBtn" class="btn"><i class="fa-solid fa-upload"></i> Upload Audio</button>
+
         </label>
+    </div>
+    <div class="uploaded-section">
+        <h3 style="color:white; margin-top:25px;">Uploaded Audio</h3>
+        <audio id="uploadedPlayer" controls style="width:100%; margin-top:10px;"></audio>
     </div>
 
     <div class="controls-box">
@@ -198,6 +205,39 @@
     </div>
 
     <script>
+
+        // === UPLOAD AUDIO LOGIC ===
+        const uploadBtn = document.getElementById("uploadBtn");
+        const uploadInput = document.getElementById("uploadInput");
+        const uploadedPlayer = document.getElementById("uploadedPlayer");
+
+        uploadBtn.onclick = () => uploadInput.click();
+
+        uploadInput.onchange = async () => {
+            const file = uploadInput.files[0];
+            if (!file) return;
+
+            // Preview instantly
+            uploadedPlayer.src = URL.createObjectURL(file);
+
+            // Upload to server
+            const formData = new FormData();
+            formData.append("beatFile", file);
+
+            const response = await fetch("/Upload/UploadBeat", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                const savedPath = await response.text();
+                console.log("Saved to:", savedPath);
+            } else {
+                alert("Upload failed.");
+            }
+        };
+
+
         let mediaRecorder;
         let chunks = [];
 
