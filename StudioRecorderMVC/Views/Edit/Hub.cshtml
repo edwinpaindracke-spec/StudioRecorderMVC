@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; // adjust if your layout path differs
+    ViewBag.Title = "Editing Hub";
+}
+
+<h2>Editing Tools</h2>
+
+<div style="display:flex; gap:12px; margin-top:16px;">
+    <a href="/Edit/Cut" class="btn btn-danger">✂️ Cut</a>
+    <a href="/Edit/Volume" class="btn btn-warning">🔊 Volume</a>
+    <a href="/Edit/Mix" class="btn btn-primary">🎚️ Mix</a>
+    <a href="/Edit/Export" class="btn btn-success">💾 Export</a>
+</div>
+
+<p style="margin-top:18px; color:#666;">
+    Tip: if any page is missing, click the link will show a 404 — make sure the corresponding view + controller action exist.
+</p>
