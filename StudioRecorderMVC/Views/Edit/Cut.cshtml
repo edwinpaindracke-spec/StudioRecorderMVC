@@ -1,7 +1,36 @@
-﻿
-@{
-    ViewData["Title"] = "Cut";
+﻿@{
+    ViewBag.Title = "Cut Audio";
 }
 
-<h1>Cut</h1>
+<h2>Cut / Trim Audio</h2>
 
+<input type="file" id="cutFile" accept="audio/*" class="btn btn-primary mb-3">
+
+<div id="waveCut" style="height:120px;"></div>
+
+<button id="cutBtn" class="btn btn-danger mt-3">Cut Selection</button>
+
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<script src="https://unpkg.com/wavesurfer.js/dist/plugins/regions.min.js"></script>
+
+<script>
+    const wave = WaveSurfer.create({
+        container: '#waveCut',
+        waveColor: '#a78bfa',
+        progressColor: '#7c3aed',
+        height: 120,
+        plugins: [ WaveSurfer.regions.create() ]
+    });
+
+    cutFile.onchange = (e) => {
+        wave.load(URL.createObjectURL(e.target.files[0]));
+    };
+
+    // CUT LOGIC
+    cutBtn.onclick = () => {
+        const region = Object.values(wave.regions.list)[0];
+        if (region) {
+            wave.trim(region.start, region.end);
+        }
+    };
+</script>

@@ -1,7 +1,73 @@
-﻿
-@{
-    ViewData["Title"] = "Mix";
+﻿@{
+    ViewBag.Title = "Mix Tracks";
 }
 
-<h1>Mix</h1>
+<h2>Mix Tracks</h2>
 
+<button id="uploadBeat" class="btn btn-primary">Upload Beat</button>
+<button id="uploadVocal" class="btn btn-secondary">Upload Vocal</button>
+
+<input type="file" id="beatInput" accept="audio/*" style="display:none;">
+<input type="file" id="vocalInput" accept="audio/*" style="display:none;">
+
+<h3>Beat</h3>
+<div id="waveBeat" style="height:120px;"></div>
+
+<h3>Vocal</h3>
+<div id="waveVocal" style="height:120px;"></div>
+
+<button id="mixBtn" class="btn btn-warning mt-3">Mix & Export</button>
+
+<script src="https://unpkg.com/wavesurfer.js"></script>
+
+<script>
+    // Waves
+    const waveBeat = WaveSurfer.create({
+        container: '#waveBeat',
+        waveColor: '#a78bfa',
+        progressColor: '#7c3aed',
+        height: 120
+    });
+
+    const waveVocal = WaveSurfer.create({
+        container: '#waveVocal',
+        waveColor: '#60a5fa',
+        progressColor: '#2563eb',
+        height: 120
+    });
+
+    // Upload triggers
+    uploadBeat.onclick = () => beatInput.click();
+    uploadVocal.onclick = () => vocalInput.click();
+
+    beatInput.onchange = e => waveBeat.load(URL.createObjectURL(e.target.files[0]));
+    vocalInput.onchange = e => waveVocal.load(URL.createObjectURL(e.target.files[0]));
+
+    mixBtn.onclick = async () => {
+        const ctx = new AudioContext();
+
+        const beat = await ctx.decodeAudioData(await (await fetch(waveBeat.getDecodedData().src)).arrayBuffer());
+        const vocal = await ctx.decodeAudioData(await (await fetch(waveVocal.getDecodedData().src)).arrayBuffer());
+
+        const length = Math.max(beat.length, vocal.length);
+        const mix = ctx.createBuffer(2, length, ctx.sampleRate);
+
+        for (let i = 0; i < 2; i++) {
+            const out = mix.getChannelData(i);
+            const b = beat.getChannelData(i % beat.numberOfChannels);
+            const v = vocal.getChannelData(i % vocal.numberOfChannels);
+
+            for (let s = 0; s < length; s++)
+                out[s] = (b[s] || 0) + (v[s] || 0);
+        }
+
+        const wav = audioBufferToWav(mix);
+        const blob = new Blob([new DataView(wav)], { type: "audio/wav" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "mixed.wav";
+        a.click();
+    };
+</script>

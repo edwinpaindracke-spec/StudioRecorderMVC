@@ -1,7 +1,31 @@
-﻿
-@{
-    ViewData["Title"] = "Volume";
+﻿@{
+    ViewBag.Title = "Volume Adjustment";
 }
 
-<h1>Volume</h1>
+<h2>Volume Adjustment</h2>
 
+<input type="file" id="volFile" accept="audio/*" class="btn btn-primary mb-3">
+
+<div id="waveVol" style="height:120px;"></div>
+
+<label class="mt-3">Volume</label>
+<input type="range" id="volumeSlider" min="0" max="3" step="0.1" value="1" class="form-range">
+
+<script src="https://unpkg.com/wavesurfer.js"></script>
+
+<script>
+    const wave = WaveSurfer.create({
+        container: '#waveVol',
+        waveColor: '#60a5fa',
+        progressColor: '#2563eb',
+        height: 120
+    });
+
+    volFile.onchange = (e) => {
+        wave.load(URL.createObjectURL(e.target.files[0]));
+    };
+
+    volumeSlider.oninput = (e) => {
+        wave.setVolume(e.target.value);
+    };
+</script>
